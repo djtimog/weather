@@ -6,6 +6,7 @@ import Forecast from "@/components/Forecast";
 import Header from "@/components/Header";
 import SearchBar from "@/components/SearchBar";
 import WeatherCard from "@/components/WeatherCard";
+import HourlyForecastCard from "@/components/HourlyForecast";
 
 export default function Home() {
   const [city, setCity] = useState("");
@@ -13,37 +14,51 @@ export default function Home() {
   const handleSearch = (query: string) => {
     setCity(query);
   };
+
   const fakeWeather = {
-    temperature: 28,
+    city: "Berlin",
+    country: "Germany",
+    date: "Tuesday, Aug 5, 2025",
+    temperature: 20,
+    feelsLike: 18,
+    humidity: 46,
+    wind: 14,
+    precipitation: 0,
     description: "clear sky",
-    humidity: 60,
-    wind: 12,
-    date: new Date(),
-  }
+  };
 
   return (
     <>
-      <header className="shadow-2xl sticky top-0 bg-inherit">
+      <header className="shadow-2xl sticky top-0 bg-inherit z-50">
         <Header />
       </header>
-      <main className="min-h-screen p-6 container mx-auto">
+      <main className="min-h-screen p-10 mx-auto">
         <section>
           <h1 className="text-3xl font-bold mb-6 text-center">
             How&apos;s the sky🌦️ looking today?
           </h1>
           <SearchBar onSearch={setCity} />
 
-          <div className="mt-6 space-y-6">
-            {city && (
-        <WeatherCard
-          city={city}
-          temperature={fakeWeather.temperature}
-          description={fakeWeather.description}
-          humidity={fakeWeather.humidity}
-          wind={fakeWeather.wind}
-        />
-      )}
-            <Forecast />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-10">
+            <div className="space-y-10 col-span-2">
+              {city && (
+                <WeatherCard
+                  city={fakeWeather.city}
+                  country={fakeWeather.country}
+                  date={fakeWeather.date}
+                  temperature={fakeWeather.temperature}
+                  feelsLike={fakeWeather.feelsLike}
+                  humidity={fakeWeather.humidity}
+                  wind={fakeWeather.wind}
+                  precipitation={fakeWeather.precipitation}
+                  description={fakeWeather.description}
+                />
+              )}
+              <Forecast />
+            </div>
+            <div>
+              <HourlyForecastCard />
+            </div>
           </div>
         </section>
       </main>
