@@ -1,31 +1,49 @@
 "use client";
 
-import { useState } from "react";
-
 import Forecast from "@/components/Forecast";
 import Header from "@/components/Header";
 import SearchBar from "@/components/SearchBar";
-import WeatherCard from "@/components/WeatherCard";
 import HourlyForecastCard from "@/components/HourlyForecast";
+import { useEffect, useState } from "react";
+import { fetchWeather, reverseGeocode } from "@/lib/api";
+import WeatherCard from "@/components/WeatherCard";
+import LandingPage from "@/components/LandingPage";
 
 export default function Home() {
-  const [city, setCity] = useState("");
+  const [weather, setWeather] = useState<any>(null);
+  const [locationName, setLocationName] = useState<string>("");
+  const [denied, setDenied] = useState(false);
 
-  const handleSearch = (query: string) => {
-    setCity(query);
-  };
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      setDenied(true);
+      return;
+    }
 
-  const fakeWeather = {
-    city: "Berlin",
-    country: "Germany",
-    date: "Tuesday, Aug 5, 2025",
-    temperature: 20,
-    feelsLike: 18,
-    humidity: 46,
-    wind: 14,
-    precipitation: 0,
-    description: "clear sky",
-  };
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+
+        try {
+          const [w, loc] = await Promise.all([
+            fetchWeather(lat, lon),
+            reverseGeocode(lat, lon),
+          ]);
+          setWeather(w);
+          setLocationName(loc);
+        } catch (err) {
+          console.error(err);
+        }
+      },
+      () => setDenied(true) // user denied location
+    );
+  }, []);
+
+  if (denied) return <LandingPage />;
+
+  if (!weather)
+    return <p className="text-center text-white mt-10">Loading...</p>;
 
   return (
     <>
@@ -37,11 +55,11 @@ export default function Home() {
           <h1 className="text-3xl font-bold mb-6 text-center">
             How&apos;s the sky🌦️ looking today?
           </h1>
-          <SearchBar onSearch={setCity} />
+          {/* <SearchBar onSearch={setCity} /> */}
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-10">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-10 p-10">
             <div className="space-y-10 col-span-2">
-              {city && (
+              {/* {city && (
                 <WeatherCard
                   city={fakeWeather.city}
                   country={fakeWeather.country}
@@ -53,7 +71,7 @@ export default function Home() {
                   precipitation={fakeWeather.precipitation}
                   description={fakeWeather.description}
                 />
-              )}
+              )} */}
               <Forecast />
             </div>
             <div>
