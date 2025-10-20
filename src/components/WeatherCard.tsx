@@ -1,19 +1,21 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Droplets, Wind, CloudRain, ThermometerSun, Sun } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Droplets, Wind, CloudRain, ThermometerSun, Sun } from "lucide-react";
+import UnitTemperature from "./UnitTemperature";
+import { GetWeatherIcon } from "./WeatherIcon";
 
 type WeatherCardProps = {
-  city: string
-  country: string
-  date: string
-  temperature: number
-  feelsLike: number
-  humidity: number
-  wind: number
-  precipitation: number
-  description: string
-}
+  city: string;
+  country: string;
+  date: string;
+  temperature: number;
+  feelsLike: number;
+  humidity: number;
+  wind: number;
+  precipitation: number;
+  weathercode: number;
+};
 
 export default function WeatherCard({
   city,
@@ -24,7 +26,7 @@ export default function WeatherCard({
   humidity,
   wind,
   precipitation,
-  description,
+  weathercode,
 }: WeatherCardProps) {
   return (
     <div className="w-full max-w-5xl mx-auto space-y-10">
@@ -37,10 +39,15 @@ export default function WeatherCard({
         </CardHeader>
         <CardContent className="flex items-center justify-between">
           <div className="flex flex-col">
-            <p className="text-6xl font-bold">{temperature}°</p>
-            <p className="capitalize text-lg opacity-90">{description}</p>
+            <UnitTemperature
+              temperature={temperature}
+              textClassName="text-6xl"
+              className="font-bold"
+              degreeClassName="text-2xl ml-2"
+            />
           </div>
-          <Sun className="w-20 h-20 text-yellow-300" />
+
+          <GetWeatherIcon code={weathercode} className="w-20 h-20" />
         </CardContent>
       </Card>
 
@@ -49,7 +56,12 @@ export default function WeatherCard({
           <CardContent className="flex flex-col items-center py-4">
             <ThermometerSun className="w-6 h-6 text-orange-500 mb-1" />
             <p className="text-sm">Feels Like</p>
-            <p className="text-lg font-semibold">{feelsLike}°</p>
+            <UnitTemperature
+              temperature={feelsLike}
+              textClassName="text-lg"
+              className="font-semibold"
+              degreeClassName="text-xs p-0.5"
+            />
           </CardContent>
         </Card>
 
@@ -78,5 +90,5 @@ export default function WeatherCard({
         </Card>
       </div>
     </div>
-  )
+  );
 }
