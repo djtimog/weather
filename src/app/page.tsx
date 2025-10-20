@@ -43,11 +43,17 @@ export default function Home() {
     );
   }, []);
 
-  if (denied || !lat || !lon || !city || !country) return <LandingPage />;
-
-  const handleSearch = (query: string) => {
-    setCity(query);
+  const handleSearch = (city: string, lat?: number, lon?: number) => {
+    setCity(city);
+    if (lat && lon) {
+      setLat(lat);
+      setLon(lon);
+    }
   };
+
+  if (!lat || !lon || !city || !country)
+    return <LandingPage onSearch={handleSearch} />;
+
   return (
     <>
       <Image
@@ -68,10 +74,10 @@ export default function Home() {
             <h1 className="text-4xl font-bold mb-15 text-center">
               How&apos;s the sky🌦️ looking today?
             </h1>
-            <SearchBar onSearch={setCity} />
+            <SearchBar onSearch={handleSearch} />
           </div>
 
-          <div className="px-10 pb-10 bg-black rounded-2xl">
+          <div className="px-10 pb-10 dark:bg-black bg-white rounded-2xl">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-10 p-10">
               <div className="space-y-10 col-span-2">
                 <WeatherContainer

@@ -3,16 +3,15 @@ import SearchBar from "@/components/SearchBar";
 import Image from "next/image";
 import { useState } from "react";
 
-export default function LandingPage() {
-  const [city, setCity] = useState("");
+type LandingPageProps = {
+  onSearch: (city: string, lat?: number, lon?: number) => void;
+};
 
-  const handleSearch = (query: string) => {
-    setCity(query);
-  };
+export default function LandingPage({ onSearch }: LandingPageProps) {
   return (
     <div>
       <Image
-        src={"/cloudy-weather.webp"}
+        src={"/rain-weather.webp"}
         width={1000}
         height={500}
         alt="landping page image"
@@ -23,7 +22,7 @@ export default function LandingPage() {
         <p className="mb-6">
           Enable location access for local weather, or search manually.
         </p>
-        <SearchBar onSearch={setCity} />
+        <SearchBar onSearch={onSearch} />
       </div>
     </div>
   );

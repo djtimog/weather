@@ -1,93 +1,78 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Search } from "lucide-react"
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command"
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Search } from "lucide-react";
 
-const cities = [
-  "Lagos",
-  "Abuja",
-  "Ibadan",
-  "Kano",
-  "Port Harcourt",
-  "Enugu",
-  "Jos",
-  "Abeokuta",
-  "Benin City",
-  "Calabar",
-]
+type SearchBarProps = {
+  onSearch: (city: string, lat?: number, lon?: number) => void;
+};
 
-export default function SearchBar({
-  onSearch,
-}: {
-  onSearch: (query: string) => void
-}) {
-  const [query, setQuery] = useState("")
-  const [open, setOpen] = useState(false)
+export default function SearchBar({ onSearch }: SearchBarProps) {
+  const [query, setQuery] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSelect = (value: string) => {
-    setQuery(value)
-    setOpen(false)
-    onSearch(value)
-  }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!query.trim()) return;
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!query.trim()) return
-    onSearch(query.trim())
-    setOpen(false)
-  }
+    setLoading(true);
+    setError(null);
+
+    try {
+      const res = await fetch(
+        `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(
+          query
+        )}&count=1`
+      );
+
+      const data = await res.json();
+
+      if (!data.results || data.results.length === 0) {
+        setError("City not found");
+        setLoading(false);
+        return;
+      }
+
+      const { name, latitude, longitude } = data.results[0];
+      onSearch(name, latitude, longitude);
+
+      setLoading(false);
+      setQuery("");
+    } catch (err) {
+      console.error(err);
+      setError("Something went wrong");
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="w-full max-w-lg mx-auto my-6">
-      <form
-        onSubmit={handleSubmit}
-        className="flex items-start gap-2"
+    <form
+      onSubmit={handleSubmit}
+      className="flex items-center justify-center gap-2 max-w-md mx-auto"
+    >
+      <Input
+        placeholder="Search city..."
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        className="rounded-xl px-4 py-2"
+      />
+      <Button
+        type="submit"
+        disabled={loading}
+        className="rounded-xl flex items-center gap-1"
       >
-        <Command className="rounded-lg border shadow-md w-full">
-          <CommandInput
-            placeholder="Search for a place..."
-            value={query}
-            onValueChange={(val) => {
-              setQuery(val)
-              setOpen(true)
-            }}
-          />
-          {open && query !== "" && (
-            <CommandList>
-              <CommandEmpty>No results found.</CommandEmpty>
-              <CommandGroup heading="Suggestions">
-                {cities
-                  .filter((city) =>
-                    city.toLowerCase().includes(query.toLowerCase())
-                  )
-                  .map((city) => (
-                    <CommandItem
-                      key={city}
-                      value={city}
-                      onSelect={() => handleSelect(city)}
-                    >
-                      {city}
-                    </CommandItem>
-                  ))}
-              </CommandGroup>
-            </CommandList>
-          )}
-        </Command>
+        <Search className="w-4 h-4" />
+        {loading ? "Searching..." : "Search"}
+      </Button>
 
-        <Button type="submit" className="flex items-center shadow-2xl gap-2">
-          <Search className="h-4 w-4" />
-          Search
-        </Button>
-      </form>
-    </div>
-  )
+      {error && (
+        <p className="text-sm text-red-500 absolute mt-12 text-center w-full">
+          {error}
+        </p>
+      )}
+    </form>
+  );
 }

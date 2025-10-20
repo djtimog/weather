@@ -14,7 +14,7 @@ export default function Header() {
           height={100}
           className="size-11 object-contain"
         />
-        <p className="text-md font-bold">Weather App</p>
+        <p className="text-md font-bold">Sky Watch</p>
       </Link>
 
       <div className="flex items-center gap-4 flex-wrap">

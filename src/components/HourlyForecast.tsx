@@ -73,7 +73,7 @@ export default function HourlyForecastCard({
   }
 
   return (
-    <div className="bg-secondary p-5 rounded-2xl mx-auto border shadow-2xl">
+    <div className="bg-secondary p-5 rounded-2xl mx-auto border shadow-2xl w-full">
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-lg font-semibold">Hourly Forecast</h2>
         <Select
