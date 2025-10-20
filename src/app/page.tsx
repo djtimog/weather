@@ -1,14 +1,14 @@
 "use client";
 
-import Forecast from "@/components/Forecast";
-import Header from "@/components/Header";
-import HourlyForecastCard from "@/components/HourlyForecast";
 import { useEffect, useState } from "react";
+import Image from "next/image";
+import Header from "@/components/Header";
+import Forecast from "@/components/Forecast";
+import HourlyForecastCard from "@/components/HourlyForecast";
 import LandingPage from "@/components/LandingPage";
 import WeatherContainer from "@/components/WeatherContainer";
-import { fetchLocationName } from "@/lib/api";
 import SearchBar from "@/components/SearchBar";
-import Image from "next/image";
+import { fetchLocationName } from "@/lib/api";
 
 export default function Home() {
   const [lat, setLat] = useState<number | null>(null);
@@ -24,36 +24,44 @@ export default function Home() {
     }
 
     navigator.geolocation.getCurrentPosition(
-      async (pos) => {
+      (pos) => {
         const { latitude, longitude } = pos.coords;
         setLat(latitude);
         setLon(longitude);
-
-        try {
-          const loc = await fetchLocationName(latitude, longitude);
-          setCity(loc.city);
-          setCountry(loc.country);
-        } catch (err) {
-          console.error(err);
-          setCity("Unknown");
-          setCountry("Unknown");
-        }
       },
       () => setDenied(true)
     );
   }, []);
+
+  useEffect(() => {
+    async function getLocationName() {
+      if (lat && lon) {
+        try {
+          const loc = await fetchLocationName(lat, lon);
+          setCity(loc.city);
+          setCountry(loc.country);
+        } catch (err) {
+          console.error("Failed to fetch location name:", err);
+          setCity("Unknown");
+          setCountry("Unknown");
+        }
+      }
+    }
+    getLocationName();
+  }, [lat, lon]);
 
   const handleSearch = (city: string, lat?: number, lon?: number) => {
     setCity(city);
     if (lat && lon) {
       setLat(lat);
       setLon(lon);
+      setDenied(false);
     }
   };
 
-  if (!lat || !lon || !city || !country)
+  if (denied || !lat || !lon || !city || !country) {
     return <LandingPage onSearch={handleSearch} />;
-
+  }
   return (
     <>
       <Image
@@ -61,7 +69,7 @@ export default function Home() {
         width={1000}
         height={500}
         alt="Background image"
-        className="fixed top-0 left-0 w-full h-full -z-50 object-cover brightness-75"
+        className="fixed top-0 left-0 w-full h-full -z-50 object-cover dark:brightness-75"
       />
 
       <header className="shadow-2xl sticky top-0 bg-inherit z-50">

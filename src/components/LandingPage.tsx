@@ -11,11 +11,11 @@ export default function LandingPage({ onSearch }: LandingPageProps) {
   return (
     <div>
       <Image
-        src={"/rain-weather.webp"}
+        src={"/cloudy-weather.webp"}
         width={1000}
         height={500}
         alt="landping page image"
-        className="w-full h-screen absolute -z-50 object-cover brightness-75"
+        className="w-full h-screen absolute -z-50 object-cover dark:brightness-75"
       />
       <div className="flex flex-col items-center justify-center h-screen text-center">
         <h1 className="text-3xl font-bold mb-4">🌦 Welcome to Weather App</h1>
