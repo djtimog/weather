@@ -9,6 +9,7 @@ import LandingPage from "@/components/LandingPage";
 import WeatherContainer from "@/components/WeatherContainer";
 import SearchBar from "@/components/SearchBar";
 import { fetchLocationName } from "@/lib/api";
+import Snowfall from "react-snowfall";
 
 export default function Home() {
   const [lat, setLat] = useState<number | null>(null);
@@ -64,6 +65,7 @@ export default function Home() {
   }
   return (
     <>
+      <Snowfall color="white" speed={[0.5, 1]} opacity={[0.5, 1]} />
       <Image
         src="/cloudy-weather.webp"
         width={1000}
@@ -78,15 +80,15 @@ export default function Home() {
 
       <main className="min-h-screen mx-auto">
         <section>
-          <div className="p-10 mb-10">
+          <div className="sm:p-10 mb-10">
             <h1 className="text-4xl font-bold mb-15 text-center">
               How&apos;s the sky🌦️ looking today?
             </h1>
             <SearchBar onSearch={handleSearch} />
           </div>
 
-          <div className="px-10 pb-10 dark:bg-black bg-white rounded-2xl">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-10 p-10">
+          <div className="sm:px-10 pb-10 dark:bg-black bg-white rounded-2xl">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-10 sm:p-10">
               <div className="space-y-10 col-span-2">
                 <WeatherContainer
                   lat={lat}

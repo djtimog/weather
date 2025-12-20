@@ -1,7 +1,6 @@
-"use client";
 import SearchBar from "@/components/SearchBar";
 import Image from "next/image";
-import { useState } from "react";
+import Snowfall from "react-snowfall";
 
 type LandingPageProps = {
   onSearch: (city: string, lat?: number, lon?: number) => void;
@@ -10,6 +9,8 @@ type LandingPageProps = {
 export default function LandingPage({ onSearch }: LandingPageProps) {
   return (
     <div>
+      <Snowfall color="white" speed={[0.5, 1]} opacity={[0.5, 1]} />
+
       <Image
         src={"/cloudy-weather.webp"}
         width={1000}
